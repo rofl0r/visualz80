@@ -1,3 +1,16 @@
+# visual z80
+
+this is a fork of https://github.com/floooh/v6502r repo with a proper
+build system and all dependencies included, so you can build it without
+python3 and CMake installed and without a ridiculous micro-dependency-centered
+build tool that fetches a metric ton of git repo and binary tools
+during the build.
+
+just run `make` to build.
+
+original README follows.
+
+
 # v6502r
 
 Visual6502 and VisualZ80 Remixed
