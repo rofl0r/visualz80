@@ -126,7 +126,10 @@ static int need_render(void) {
 }
 
 static void app_frame(void) {
-    if (!need_render()) return;
+    if (!need_render()) {
+       sapp_input_wait();
+       return;
+    }
     gfx_new_frame(sapp_widthf(), sapp_heightf());
     ui_frame();
     sim_frame();
