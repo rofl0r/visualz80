@@ -37,6 +37,10 @@ OBJS = $(SRCS:%.c=%.o) $(CXXOBJS) ext/sokol/sokol.cc.o
 
 CPPFLAGS = -Iext/asmx/src -Iext/sokol -Isokol -Iext/perfect6502 -Isrc/z80 -Iext -Ifips-imgui/imgui -DASMX_Z80 -DCHIP_Z80
 
+-include config.mak
+
+CXXFLAGS = $(CFLAGS)
+
 all: $(APP)
 
 src/gfx.o: src/gfx.glsl.h
