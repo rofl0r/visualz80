@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <time.h>
 //------------------------------------------------------------------------------
 //  v6502r.c
 //  Main source file.
@@ -36,6 +38,15 @@ const char* init_src =
     "data:\tdb 40h\n"
     "stack:\torg 30h\n";
 #endif
+
+// timestamp in microsecs of last user activity
+static uint64_t user_activity = -1ULL;
+
+static uint64_t get_ts(void) {
+    struct timespec nowtime;
+    clock_gettime(CLOCK_REALTIME, &nowtime);
+    return nowtime.tv_sec * 1000000ul + nowtime.tv_nsec/1000000ul;
+}
 
 static void app_init(void) {
     util_init();
@@ -108,7 +119,14 @@ static void app_init(void) {
     sim_start();
 }
 
+static int need_render(void) {
+    if (user_activity == -1ULL || !sim_get_paused()) return 1;
+    uint64_t ts = get_ts();
+    return (ts - user_activity < 200);
+}
+
 static void app_frame(void) {
+    if (!need_render()) return;
     gfx_new_frame(sapp_widthf(), sapp_heightf());
     ui_frame();
     sim_frame();
@@ -142,6 +160,7 @@ static void app_frame(void) {
 
 static void app_input(const sapp_event* ev) {
     input_handle_event(ev);
+    user_activity = get_ts();
 }
 
 static void app_shutdown(void) {
