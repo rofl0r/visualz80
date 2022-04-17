@@ -1,15 +1,26 @@
 SHADER_LANG = glsl330
 
-APP = visualz80
+# set to z80 or 6502 in config.mak
+TARGET = z80
+
+APP = visual$(TARGET)
+
+Z80SRCS = \
+ext/perfect6502/perfectz80.c \
+ext/asmx/src/asmz80.c \
+src/z80/nodenames.c \
+src/z80/segdefs.c
+
+6502SRCS = \
+ext/perfect6502/perfect6502.c \
+ext/asmx/src/asm6502.c \
+src/m6502/nodenames.c \
+src/m6502/segdefs.c
 
 SRCS = \
-ext/perfect6502/perfectz80.c \
 ext/perfect6502/netlist_sim.c \
 ext/sokol/sokol.c \
 ext/asmx/src/asmx.c \
-ext/asmx/src/asmz80.c \
-src/z80/nodenames.c \
-src/z80/segdefs.c \
 src/asm.c \
 src/dummy.c \
 src/gfx.c \
@@ -35,9 +46,17 @@ CXXOBJS = $(CXXSRCS:%.cc=%.o) ext/texteditor/TextEditor.o \
 
 OBJS = $(SRCS:%.c=%.o) $(CXXOBJS) ext/sokol/sokol.cc.o
 
-CPPFLAGS = -Iext/asmx/src -Iext/sokol -Isokol -Iext/perfect6502 -Isrc/z80 -Iext -Ifips-imgui/imgui -DASMX_Z80 -DCHIP_Z80
+CPPFLAGS = -Iext/asmx/src -Iext/sokol -Isokol -Iext/perfect6502 -Iext -Ifips-imgui/imgui
 
 -include config.mak
+
+ifeq ($(TARGET),z80)
+CPPFLAGS += -Isrc/z80 -DASMX_Z80 -DCHIP_Z80
+SRCS += $(Z80SRCS)
+else
+CPPFLAGS += -Isrc/m6502 -DASMX_6502 -DCHIP_6502
+SRCS += $(6502SRCS)
+endif
 
 CXXFLAGS = $(CFLAGS)
 
